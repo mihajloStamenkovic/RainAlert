@@ -1,0 +1,30 @@
+name: Rain Check
+
+on:
+  schedule:
+    # GitHub Actions cron runs in UTC — Serbia is UTC+2 in summer (CEST), UTC+1 in winter (CET)
+    # These times target 7am / 1pm / 7pm Serbia time during CEST (summer).
+    - cron: "0 5 * * *"   # 07:00 Serbia time (CEST, UTC+2)
+    - cron: "0 11 * * *"  # 13:00 Serbia time (CEST, UTC+2)
+    - cron: "0 17 * * *"  # 19:00 Serbia time (CEST, UTC+2)
+  workflow_dispatch: {} # lets you manually trigger a run from the GitHub Actions tab, for testing
+
+jobs:
+  check-rain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run rain check script
+        env:
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+          CITY_NAME: ${{ secrets.CITY_NAME }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node check-rain.js
