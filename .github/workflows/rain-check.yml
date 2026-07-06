@@ -4,6 +4,7 @@ on:
   schedule:
     # GitHub Actions cron runs in UTC — Serbia is UTC+2 in summer (CEST), UTC+1 in winter (CET)
     # These times target 7am / 1pm / 7pm Serbia time during CEST (summer).
+    # See note below the file for how to adjust for winter (CET).
     - cron: "0 5 * * *"   # 07:00 Serbia time (CEST, UTC+2)
     - cron: "0 11 * * *"  # 13:00 Serbia time (CEST, UTC+2)
     - cron: "0 17 * * *"  # 19:00 Serbia time (CEST, UTC+2)
@@ -16,10 +17,10 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          node-version: "20"
+          python-version: "3.12"
 
       - name: Run rain check script
         env:
@@ -27,4 +28,4 @@ jobs:
           CITY_NAME: ${{ secrets.CITY_NAME }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: node check-rain.js
+        run: python check_rain.py
